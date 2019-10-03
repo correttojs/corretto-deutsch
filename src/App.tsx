@@ -7,10 +7,26 @@ import { SetList } from './SetList';
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { SetDetail } from './SetDetail';
+import {Grommet, Box} from 'grommet';
+
+const theme = {
+  global: {
+    font: {
+      family: 'Roboto',
+    },
+  },
+};
 
 const App: React.FC = () => {
   return (
+    <Grommet theme={theme} full={true}>
+
   <ApolloProvider client={client}>
+          <Box
+  direction="row"
+  border={{ color: 'brand', size: 'large' }}
+  pad="medium"
+>
      <Router>
      <Switch>
           <Route path="/set/:id">
@@ -21,8 +37,10 @@ const App: React.FC = () => {
           </Route>
         </Switch>
      </Router>
+</Box>
     
   </ApolloProvider>
+  </Grommet>
   );
 }
 

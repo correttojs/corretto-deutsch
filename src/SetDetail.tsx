@@ -2,7 +2,9 @@ import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-
+import { Heading, Button, Table, TableHeader, TableRow, TableCell, TableBody, Grid } from 'grommet';
+import { Previous, Download } from 'grommet-icons';
+import { Spinner } from './Spinner';
 
 const QUERY = gql`
   query Set($id: ID!) {
@@ -24,21 +26,44 @@ export const SetDetail = () => {
     const {id} = useParams()
     const {data, loading, error} = useQuery(QUERY, {variables: { id },});
     if(loading){
-        return null
+        return <Spinner/>
     }
     if(error){
         return null
     }
+    const props = {download:true}
     return <div>
-        Details of {data.set.title} {id} <button onClick={() => history.goBack()}>Back</button>
+       <Grid columns={['large', 'small']}>  <Heading margin="none">Details of {data.set.title} </Heading> 
+       <Button icon={<Previous />} label="Back" onClick={() => history.goBack()} />
+       </Grid>
+      
         <div>
-            {  data.set.audio &&  <a href={data.set.audio} download>Click to download</a> 
-          }
-            {
+        {  data.set.audio &&  
+        <Button icon={<Download />} label="Download" {...props} href={data.set.audio} /> }
+
+            <Table>
+  <TableHeader>
+    <TableRow>
+      <TableCell scope="col">
+        Word
+      </TableCell>
+      <TableCell scope="col" >
+        Translation
+      </TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+  {
                 data.set.terms.map((t: any) => (
-                    <div>{t.word} => {t.translation}</div>
+                    <TableRow>
+                        <TableCell scope="row">{t.word}</TableCell>
+                        <TableCell >{t.translation}</TableCell>
+                    </TableRow>
                 ))
             }
+   
+  </TableBody>
+</Table>
         </div>
     </div>
 }
