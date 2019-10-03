@@ -22,6 +22,7 @@ const DELETE = gql`
         deleteSetAudio(id: $id){
         audio
         title
+        id
     }
     }
 `;
@@ -31,6 +32,7 @@ const DOWNLOAD = gql`
         mergeSetAudio(id: $id){
         audio
         title
+        id
     }
     }
 `;
@@ -60,7 +62,7 @@ export const SetList = () => {
     const history = useHistory()
 
     const [getSets, {data, loading, error, called}] = useLazyQuery(QUERY);
-    const [download, {loading:downloadLoading, data: downloadData }] = useMutation(DOWNLOAD);
+    const [download, {loading:downloadLoading, }] = useMutation(DOWNLOAD);
     const [deleteSet, { data: deleteData }] = useMutation(DELETE);
     if(!called){
         const feedId = localStorage.getItem('feedId')
@@ -84,11 +86,13 @@ export const SetList = () => {
     return (
         <div>
             <SetFeed getSets={getSets} />
-            {
-                downloadData &&  <Button icon={<Download />} label={`Download ${downloadData.mergeSetAudio.title}`} {...props} href={downloadData.mergeSetAudio.audio} /> 
-            }
+           
              {
-              deleteData &&  <div> {deleteData.deleteSetAudio.title} deleted</div>
+              deleteData &&  <Box
+              direction="row"
+              border={{ color: 'status-error', size: 'large' }}
+              margin='medium'
+            > {deleteData.deleteSetAudio.title} deleted</Box>
             }
 <Box>
 <Table>
