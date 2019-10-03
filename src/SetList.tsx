@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { Download, Task, Trash, Music, List } from 'grommet-icons';
 import { Table, Button, TableHeader, TableRow, TableCell, TableBody, TextInput, Box, Grid, Meter } from 'grommet';
 import { Spinner } from './Spinner';
-
+import { Alert } from './Alert';
 const QUERY = gql`
   query Sets($feedId: ID!){
     sets(feedId: $feedId){
@@ -38,7 +38,6 @@ const DOWNLOAD = gql`
 `;
 
 const SetFeed = ({feedId, getSets}: any) => {
-    
     const inputRef =useRef<any>(null);
     return<Grid columns={['small', 'small']}> 
 
@@ -57,13 +56,15 @@ const SetFeed = ({feedId, getSets}: any) => {
                 }}/>
             </Grid>
 }
+
+
  
 export const SetList = () => {
     const history = useHistory()
 
     const [getSets, {data, loading, error, called}] = useLazyQuery(QUERY);
     const [download, {loading:downloadLoading, }] = useMutation(DOWNLOAD);
-    const [deleteSet, { data: deleteData }] = useMutation(DELETE);
+    const [deleteSet, { loading: deleteLoading, called: deleteCalled, data: deleteData }] = useMutation(DELETE);
     if(!called){
         const feedId = localStorage.getItem('feedId')
         if(!feedId){
@@ -86,14 +87,8 @@ export const SetList = () => {
     return (
         <div>
             <SetFeed getSets={getSets} />
-           
-             {
-              deleteData &&  <Box
-              direction="row"
-              border={{ color: 'status-error', size: 'large' }}
-              margin='medium'
-            > {deleteData.deleteSetAudio.title} deleted</Box>
-            }
+            <Alert show={ deleteCalled && !deleteLoading && deleteData} message={ `${deleteData && deleteData.deleteSetAudio.title} deleted`}/>
+            
 <Box>
 <Table>
   <TableHeader>
@@ -118,17 +113,17 @@ export const SetList = () => {
                 <TableRow key={i}>
                        <TableCell scope="row">{item.title}</TableCell>
                        <TableCell>
-                 {item.audio &&     <Button icon={<Trash />} onClick={()=>deleteSet({variables: {id: item.id}})} label='Delete'/>  }
-                { !item.audio &&   <Button icon={<Music />} label={`Create Audio`}onClick={()=>download({variables: {id: item.id}})} /> }
+                 {item.audio &&     <Button icon={<Trash />} onClick={()=>deleteSet({variables: {id: item.id}})} />  }
+                { !item.audio &&   <Button icon={<Music />} onClick={()=>download({variables: {id: item.id}})} /> }
               
                 </TableCell>
                 <TableCell>
                 {
-                item.audio &&  <Button icon={<Download />} label={`Download`} {...props} href={item.audio} /> 
+                item.audio &&  <Button icon={<Download />}  {...props} href={item.audio} /> 
             }
             </TableCell>
             <TableCell>
-                   <Button icon={<Task />}  label={`Details`} onClick={() => history.push(`/set/${item.id}`)}/>
+                   <Button icon={<Task />}   onClick={() => history.push(`/set/${item.id}`)}/>
                 </TableCell>
                    </TableRow>
                 ))

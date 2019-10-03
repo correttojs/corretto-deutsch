@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
-import { Heading, Button, Table, TableHeader, TableRow, TableCell, TableBody, Grid } from 'grommet';
+import { Heading, Button, Table, TableHeader, TableRow, TableCell, TableBody, Grid, Box } from 'grommet';
 import { Previous, Download } from 'grommet-icons';
 import { Spinner } from './Spinner';
 
@@ -33,13 +33,13 @@ export const SetDetail = () => {
     }
     const props = {download:true}
     return <div>
-       <Grid columns={['large', 'small']}>  <Heading margin="none">Details of {data.set.title} </Heading> 
-       <Button icon={<Previous />} label="Back" onClick={() => history.goBack()} />
-       </Grid>
+       <Box direction='row-responsive' >  <Heading margin="none">Details of {data.set.title} </Heading> 
+       <Button icon={<Previous />}  onClick={() => history.goBack()} />
+       </Box>
       
         <div>
         {  data.set.audio &&  
-        <Button icon={<Download />} label="Download" {...props} href={data.set.audio} /> }
+        <Button icon={<Download />} {...props} href={data.set.audio} /> }
 
             <Table>
   <TableHeader>
