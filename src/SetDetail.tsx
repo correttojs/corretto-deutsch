@@ -9,6 +9,7 @@ const QUERY = gql`
     set(id: $id){
         title
         id
+        audio
         terms {
             word
             translation
@@ -31,6 +32,8 @@ export const SetDetail = () => {
     return <div>
         Details of {data.set.title} {id} <button onClick={() => history.goBack()}>Back</button>
         <div>
+            {  data.set.audio &&  <a href={data.set.audio} download>Click to download</a> 
+          }
             {
                 data.set.terms.map((t: any) => (
                     <div>{t.word} => {t.translation}</div>

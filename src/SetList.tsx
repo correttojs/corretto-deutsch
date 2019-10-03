@@ -1,13 +1,14 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useQuery, useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import React from 'react';
+import React, { useReducer, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
 const QUERY = gql`
-  {
-    sets{
+  query Sets($feedId: ID!){
+    sets(feedId: $feedId){
         title
         id
+        audio
     }
   }
 `;
@@ -33,9 +34,19 @@ const DOWNLOAD = gql`
 
 export const SetList = () => {
     const history = useHistory()
-    const {data, loading, error} = useQuery(QUERY);
+    const [getSets, {data, loading, error, called}] = useLazyQuery(QUERY);
     const [download, {loading:downloadLoading, data: downloadData }] = useMutation(DOWNLOAD);
     const [deleteSet, { data: deleteData }] = useMutation(DELETE);
+    const inputRef =useRef<HTMLInputElement>(null);
+    if(!called){
+        return <div>
+
+            <input type="text" ref={inputRef} defaultValue='107302659'/>
+            <button type='button' onClick={() => {
+                getSets({variables: {feedId: inputRef.current && inputRef.current.value}} )
+            }}>Get sets</button>
+        </div>
+    }
     if(loading || downloadLoading){
         return <div>Loading</div>
     }
@@ -53,8 +64,9 @@ export const SetList = () => {
             {
                 data.sets.map((item: any, i: number) => (
                     <div key={i}>{item.title}
-                    <button onClick={()=>deleteSet({variables: {id: item.id}})}>Delete</button>  
-                    <button onClick={()=>download({variables: {id: item.id}})}>Download</button>  
+                 {item.audio &&     <button onClick={()=>deleteSet({variables: {id: item.id}})}>Delete</button>  }
+                {!item.audio &&  <button onClick={()=>download({variables: {id: item.id}})}>Create Audio</button>  }
+                {item.audio && <a href={item.audio} download>Download</a> }
                     <button onClick={() => history.push(`/set/${item.id}`)}>Details</button></div>
                 ))
             }

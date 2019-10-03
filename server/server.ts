@@ -28,7 +28,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    sets: [Set]
+    sets(feedId: ID!): [Set]
     set(id: ID!): Set
   }
 `;
@@ -87,7 +87,7 @@ const resolvers = {
       return {
         title: set.title,
         id,
-        audio: distPath,
+        audio: distPath.replace('./', '/'),
       };
     },
   },
@@ -98,21 +98,21 @@ const resolvers = {
         throw new Error('Invalid set id');
       }
       const terms = await getTerms(id);
+      
+      const distPath = `./audio/${set.title}.mp3`;
       return {
         id,
         title: set.title,
         terms: terms.map(mapTerms),
+        audio: fse.existsSync(distPath) ? distPath.replace('./', '/') : null
       };
     },
-    sets: async () => {
-      const sets = (await getSets(107302659)).map(s => ({ id: s.id, title: s.title, terms: [] }));
-      // await Promise.all(
-      //   sets.map(async (s, i) => {
-      //     const terms = await getTerms(s.id);
-      //     sets[i].terms = terms.map(mapTerms);
-      //   }),
-      // );
-
+    sets:  async (_, { feedId }: { feedId: number }) => {
+      
+      const sets = (await getSets(feedId)).map(s => {
+        const distPath = `./audio/${s.title}.mp3`;
+        return ({ id: s.id, title: s.title, audio: fse.existsSync(distPath) ? distPath.replace('./', '/') : null })
+      });
       return sets;
     },
   },
