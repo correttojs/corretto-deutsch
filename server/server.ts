@@ -5,7 +5,7 @@ import * as fse from 'fs-extra';
 import { getDirFiles } from './toFile';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-
+import { getS3PAth, uploadFile, deleteFile } from './fileUploader';
 
 const typeDefs = gql`
   type Term {
@@ -50,14 +50,14 @@ const resolvers = {
       if (!set) {
         throw new Error('Invalid set id');
       }
-      
+
       const distPath = `./audio/${set.title}.mp3`;
-      await fse.remove(distPath);
+      await deleteFile(distPath);
       return {
         title: set.title,
         id,
         audio: null,
-      }
+      };
     },
     mergeSetAudio: async (_, { id }: { id: number }) => {
       const set = await getSet(id);
@@ -67,11 +67,12 @@ const resolvers = {
       const terms = (await getTerms(id)).map(mapTerms);
       const dirPath = `./tmp/${set.title}`;
       const distPath = `./audio/${set.title}.mp3`;
-      if(fse.existsSync(distPath)){
+      const s3Path = await getS3PAth(distPath);
+      if (s3Path) {
         return {
           title: set.title,
           id,
-          audio: distPath,
+          audio: s3Path,
         };
       }
       await fse.ensureDir(dirPath);
@@ -84,6 +85,7 @@ const resolvers = {
       const files = await getDirFiles(dirPath);
       await mergeAudio(files.map(f => `${dirPath}/${f}`), distPath, false);
       await fse.remove(dirPath);
+      await uploadFile(distPath);
       return {
         title: set.title,
         id,
@@ -98,21 +100,28 @@ const resolvers = {
         throw new Error('Invalid set id');
       }
       const terms = await getTerms(id);
-      
+
       const distPath = `./audio/${set.title}.mp3`;
+      const s3Path = await getS3PAth(distPath);
       return {
         id,
         title: set.title,
         terms: terms.map(mapTerms),
-        audio: fse.existsSync(distPath) ? distPath.replace('./', '/') : null
+        audio: s3Path,
       };
     },
-    sets:  async (_, { feedId }: { feedId: number }) => {
-      
-      const sets = (await getSets(feedId)).map(s => {
-        const distPath = `./audio/${s.title}.mp3`;
-        return ({ id: s.id, title: s.title, audio: fse.existsSync(distPath) ? distPath.replace('./', '/') : null })
-      });
+    sets: async (_, { feedId }: { feedId: number }) => {
+      const sets = await Promise.all(
+        (await getSets(feedId)).map(async s => {
+          const distPath = `./audio/${s.title}.mp3`;
+          const s3Path = await getS3PAth(distPath);
+          return {
+            id: s.id,
+            title: s.title,
+            audio: s3Path,
+          };
+        }),
+      );
       return sets;
     },
   },
@@ -120,9 +129,9 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
-app.use('/audio', express.static('audio'))
-app.use(express.static('build'))
+app.use('/audio', express.static('audio'));
+app.use(express.static('build'));
 server.applyMiddleware({ app });
 app.listen({ port: process.env.PORT || 4000 }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`),
 );
