@@ -4,7 +4,6 @@ import { mergeAudio } from './mergeAudio';
 import * as fse from 'fs-extra';
 import { getDirFiles } from './toFile';
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
 import { getS3PAth, uploadFile, deleteFile } from './fileUploader';
 
 const typeDefs = gql`

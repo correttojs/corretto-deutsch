@@ -8,8 +8,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { SetDetail } from '../SetDetail';
 import { Grommet, Box } from 'grommet';
 
-import { QueryParamProvider } from 'use-query-params';
-
 const theme = {
   global: {
     font: {
@@ -24,16 +22,14 @@ const App: React.FC = () => {
       <ApolloProvider client={client}>
         <Box direction="row" border={{ color: 'brand', size: 'large' }} pad="medium">
           <Router>
-            <QueryParamProvider ReactRouterRoute={Route}>
-              <Switch>
-                <Route path="/set/:id">
-                  <SetDetail />
-                </Route>
-                <Route path="/">
-                  <SetList />
-                </Route>
-              </Switch>
-            </QueryParamProvider>
+            <Switch>
+              <Route path="/set/:id">
+                <SetDetail />
+              </Route>
+              <Route path="/">
+                <SetList />
+              </Route>
+            </Switch>
           </Router>
         </Box>
       </ApolloProvider>

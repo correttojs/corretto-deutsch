@@ -2,6 +2,14 @@ import * as AWS from 'aws-sdk';
 import * as fs from 'fs';
 
 const s3Client = new AWS.S3();
+
+if (process.env.aws_access_key_id) {
+  s3Client.config = new AWS.Config({
+    accessKeyId: process.env.aws_access_key_id,
+    secretAccessKey: process.env.aws_secret_access_key,
+  });
+}
+
 const BUCKET_NAME = 'corretto';
 
 export const uploadFile = (fileName: string) => {
