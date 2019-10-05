@@ -4,7 +4,7 @@ import { mergeAudio } from './mergeAudio';
 import * as fse from 'fs-extra';
 import { getDirFiles } from './toFile';
 import * as express from 'express';
-import { getS3PAth, uploadFile, deleteFile } from './fileUploader';
+import { getS3PAth, uploadFile, deleteFile, getFile } from './fileUploader';
 
 const typeDefs = gql`
   type Term {
@@ -128,7 +128,9 @@ const resolvers = {
 
 const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
-app.use('/audio', express.static('audio'));
+app.get('/audio/:path', (req, res) => {
+  getFile(req.params.path).pipe(res);
+});
 app.use(express.static('build'));
 server.applyMiddleware({ app });
 app.listen({ port: process.env.PORT || 4000 }, () =>

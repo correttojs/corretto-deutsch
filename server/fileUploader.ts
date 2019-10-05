@@ -34,8 +34,17 @@ export const getS3PAth = async (fileName: string) => {
         Key: fileName.replace('./', ''),
       })
       .promise();
-    return fileName.replace('./', 'https://corretto.s3.eu-central-1.amazonaws.com/');
+    return fileName.replace('./', '');
   } catch (e) {
     return null;
   }
+};
+
+export const getFile = (fileName: string) => {
+  return s3Client
+    .getObject({
+      Bucket: BUCKET_NAME,
+      Key: `audio/${fileName}`,
+    })
+    .createReadStream();
 };
