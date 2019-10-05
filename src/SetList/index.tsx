@@ -80,9 +80,9 @@ export const SetList = () => {
           <TableHeader>
             <TableRow>
               <TableCell scope="col">Set</TableCell>
-              <TableCell scope="col">Delete/Create</TableCell>
-              <TableCell scope="col">Download</TableCell>
-              <TableCell scope="col">Details</TableCell>
+              <TableCell scope="col"></TableCell>
+              <TableCell scope="col"></TableCell>
+              <TableCell scope="col"></TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
