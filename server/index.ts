@@ -5,8 +5,9 @@
 // import { mergeAudio } from './mergeAudio';
 // import { getFilePath } from './toFile';
 // import { getSets, getTerms, getTerm, getAudio } from './quizlet';
-import './server';
+
 require('dotenv').config();
+import './server';
 
 // const openFile = util.promisify(fs.readFile);
 

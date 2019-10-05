@@ -26,7 +26,7 @@ export const mergeAudio = (source: string[], target: string, twice: boolean) => 
     }
 
     f.on('start', function(commandLine) {
-      console.log('Spawned Ffmpeg with command: ' + commandLine);
+      // console.log('Spawned Ffmpeg with command: ' + commandLine);
     })
       // .on('progress', function(progress) {
       //   console.log('Processing: ' + progress.percent + '% done');
@@ -35,11 +35,11 @@ export const mergeAudio = (source: string[], target: string, twice: boolean) => 
       //   console.log('Stderr output: ' + stderrLine);
       // })
       .on('error', function(err) {
-        console.log('An error occurred: ' + err.message);
+        // console.log('An error occurred: ' + err.message);
         reject(err);
       })
       .on('end', function() {
-        console.log('end');
+        // console.log('end');
         resolve();
       })
       .mergeToFile(target);

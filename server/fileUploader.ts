@@ -3,15 +3,8 @@ import * as fs from 'fs';
 
 const s3Client = new AWS.S3();
 
-if (process.env.aws_access_key_id) {
-  s3Client.config = new AWS.Config({
-    accessKeyId: process.env.aws_access_key_id,
-    secretAccessKey: process.env.aws_secret_access_key,
-  });
-}
-
 const BUCKET_NAME = 'corretto';
-
+console.log(process.env.AWS_ACCESS_KEY_ID, process.env.AWS_SECRET_ACCESS_KEY);
 export const uploadFile = (fileName: string) => {
   const fileContent = fs.readFileSync(fileName);
   s3Client
