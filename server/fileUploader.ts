@@ -34,7 +34,7 @@ export const getS3PAth = async (fileName: string) => {
         Key: fileName.replace('./', ''),
       })
       .promise();
-    return fileName.replace('./', '');
+    return fileName.replace('./', '/');
   } catch (e) {
     return null;
   }

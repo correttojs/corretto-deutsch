@@ -7,6 +7,7 @@ import { Table, Button, TableHeader, TableRow, TableCell, TableBody, Box } from 
 import { Spinner } from '../Spinner';
 import { Alert } from './Alert';
 import { SetFeedId } from './SetFeed';
+import { SaveOffline } from './SaveOffline';
 
 const QUERY = gql`
   query Sets($feedId: ID!) {
@@ -70,6 +71,7 @@ export const SetList = () => {
   const props = { download: true };
   return (
     <div>
+      <SaveOffline items={data.sets} />
       <SetFeedId feedId={null} getSets={getSets} />
       <Alert
         show={deleteCalled && !deleteLoading && deleteData}
@@ -93,13 +95,30 @@ export const SetList = () => {
                   {item.audio && (
                     <Button
                       icon={<Trash />}
-                      onClick={() => deleteSet({ variables: { id: item.id } })}
+                      onClick={() => {
+                        deleteSet({ variables: { id: item.id } });
+                        caches.open('audio').then(cache => {
+                          cache.delete(item.audio);
+                        });
+                      }}
                     />
                   )}
                   {!item.audio && (
                     <Button
                       icon={<Music />}
-                      onClick={() => download({ variables: { id: item.id } })}
+                      onClick={() => {
+                        download({ variables: { id: item.id } }).then(data => {
+                          // setTimeout(() => {
+                          // }, 1000)
+                          // caches.open('audio').then(cache => {
+                          //   fetch(data.data.mergeSetAudio.audio).then(response => {
+                          //     if (response !== null) {
+                          //       cache.put(item.audio, response);
+                          //     }
+                          //   });
+                          // });
+                        });
+                      }}
                     />
                   )}
                 </TableCell>

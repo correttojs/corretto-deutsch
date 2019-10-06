@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { ApolloProvider } from '@apollo/react-hooks';
-import { client } from '../client';
 import { SetList } from '../SetList';
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
@@ -19,20 +17,18 @@ const theme = {
 const App: React.FC = () => {
   return (
     <Grommet theme={theme} full={true}>
-      <ApolloProvider client={client}>
-        <Box direction="row" border={{ color: 'brand', size: 'large' }} pad="medium">
-          <Router>
-            <Switch>
-              <Route path="/set/:id">
-                <SetDetail />
-              </Route>
-              <Route path="/">
-                <SetList />
-              </Route>
-            </Switch>
-          </Router>
-        </Box>
-      </ApolloProvider>
+      <Box direction="row" border={{ color: 'brand', size: 'large' }} pad="medium">
+        <Router>
+          <Switch>
+            <Route path="/set/:id">
+              <SetDetail />
+            </Route>
+            <Route path="/">
+              <SetList />
+            </Route>
+          </Switch>
+        </Router>
+      </Box>
     </Grommet>
   );
 };
