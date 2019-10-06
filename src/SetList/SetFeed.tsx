@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Grid, Button, TextInput } from 'grommet';
+import { Button, TextInput, Box } from 'grommet';
 import { List } from 'grommet-icons';
 import { QueryLazyOptions } from '@apollo/react-hooks';
 
@@ -9,10 +9,12 @@ export const SetFeedId: React.FC<{
 }> = ({ feedId, getSets }) => {
   const inputRef = useRef<any>(null);
   return (
-    <Grid columns={['small', 'small']}>
-      <TextInput placeholder="type here" defaultValue={feedId || '107302659'} ref={inputRef} />
-
+    <Box direction="row-responsive" alignContent="center">
+      <Box width="small" alignContent="center">
+        <TextInput placeholder="type here" defaultValue={feedId || '107302659'} ref={inputRef} />
+      </Box>
       <Button
+        margin="small"
         icon={<List />}
         label={'Get Sets'}
         onClick={() => {
@@ -22,6 +24,6 @@ export const SetFeedId: React.FC<{
           }
         }}
       />
-    </Grid>
+    </Box>
   );
 };

@@ -1,10 +1,13 @@
+/* eslint-disable no-undef */
 // This service worker file is effectively a 'no-op' that will reset any
 // previous service worker registered for the same host:port combination.
 // In the production build, this file is replaced with an actual service worker
 // file that will precache your site's local assets.
 // See https://github.com/facebook/create-react-app/issues/2272#issuecomment-302832432
 
-self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('install', () => {
+  self.skipWaiting();
+});
 
 self.addEventListener('fetch', function(event) {
   console.log('SW', event.request.url);
@@ -35,4 +38,19 @@ self.addEventListener('activate', () => {
       windowClient.navigate(windowClient.url);
     }
   });
+});
+
+workbox.core.clientsClaim();
+
+/**
+ * The workboxSW.precacheAndRoute() method efficiently caches and responds to
+ * requests for URLs in the manifest.
+ * See https://goo.gl/S9QRab
+ */
+self.__precacheManifest = [].concat(self.__precacheManifest || []);
+workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+
+workbox.routing.registerNavigationRoute(workbox.precaching.getCacheKeyForURL('/index.html'), {
+  // eslint-disable-next-line no-useless-escape
+  blacklist: [/^\/_/, /\/[^\/?]+\.[^\/]+$/],
 });
