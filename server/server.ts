@@ -129,7 +129,11 @@ const resolvers = {
 const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
 app.get('/audio/:path', (req, res) => {
-  getFile(req.params.path).pipe(res);
+  try {
+    getFile(req.params.path).pipe(res);
+  } catch (e) {
+    res.json({ error: e });
+  }
 });
 app.use(express.static('build'));
 server.applyMiddleware({ app });
