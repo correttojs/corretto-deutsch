@@ -3,7 +3,7 @@ import { gql } from 'apollo-boost';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Download, Task, Trash, Music } from 'grommet-icons';
-import { Table, Button, TableHeader, TableRow, TableCell, TableBody, Box } from 'grommet';
+import { Grid, Table, Button, TableHeader, TableRow, TableCell, TableBody, Box } from 'grommet';
 import { Spinner } from '../Spinner';
 import { Alert } from './Alert';
 import { SetFeedId } from './SetFeed';
@@ -78,60 +78,55 @@ export const SetList = () => {
         message={`${deleteData && deleteData.deleteSetAudio.title} deleted`}
       />
       <Box>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableCell scope="col">Set</TableCell>
-              <TableCell scope="col"></TableCell>
-              <TableCell scope="col"></TableCell>
-              <TableCell scope="col"></TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {data.sets.map((item: any, i: number) => (
-              <TableRow key={i}>
-                <TableCell scope="row">{item.title}</TableCell>
-                <TableCell>
-                  {item.audio && (
-                    <Button
-                      icon={<Trash />}
-                      onClick={() => {
-                        deleteSet({ variables: { id: item.id } });
-                        caches.open('audio').then(cache => {
-                          cache.delete(item.audio);
-                        });
-                      }}
-                    />
-                  )}
-                  {!item.audio && (
-                    <Button
-                      icon={<Music />}
-                      onClick={() => {
-                        download({ variables: { id: item.id } }).then(data => {
-                          // setTimeout(() => {
-                          // }, 1000)
-                          // caches.open('audio').then(cache => {
-                          //   fetch(data.data.mergeSetAudio.audio).then(response => {
-                          //     if (response !== null) {
-                          //       cache.put(item.audio, response);
-                          //     }
-                          //   });
-                          // });
-                        });
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell>
-                  {item.audio && <Button icon={<Download />} {...props} href={item.audio} />}
-                </TableCell>
-                <TableCell>
-                  <Button icon={<Task />} onClick={() => history.push(`/set/${item.id}`)} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <Grid columns={['medium', 'xsmall', 'xsmall', 'xsmall']} gap="small">
+          {data.sets.map((item: any, i: number) => (
+            <>
+              <Box>
+                {item.title}{' '}
+                {item.audio && (
+                  <audio controls>
+                    <source src={item.audio} type="audio/mpeg" />
+                  </audio>
+                )}
+              </Box>
+              <Box>
+                {item.audio && (
+                  <Button
+                    icon={<Trash />}
+                    onClick={() => {
+                      deleteSet({ variables: { id: item.id } });
+                      caches.open('audio').then(cache => {
+                        cache.delete(item.audio);
+                      });
+                    }}
+                  />
+                )}
+                {!item.audio && (
+                  <Button
+                    icon={<Music />}
+                    onClick={() => {
+                      download({ variables: { id: item.id } }).then(data => {
+                        // setTimeout(() => {
+                        // }, 1000)
+                        // caches.open('audio').then(cache => {
+                        //   fetch(data.data.mergeSetAudio.audio).then(response => {
+                        //     if (response !== null) {
+                        //       cache.put(item.audio, response);
+                        //     }
+                        //   });
+                        // });
+                      });
+                    }}
+                  />
+                )}
+              </Box>
+              <Box>{item.audio && <Button icon={<Download />} {...props} href={item.audio} />}</Box>
+              <Box>
+                <Button icon={<Task />} onClick={() => history.push(`/set/${item.id}`)} />
+              </Box>
+            </>
+          ))}
+        </Grid>
       </Box>
     </div>
   );
