@@ -78,13 +78,13 @@ export const SetList = () => {
         message={`${deleteData && deleteData.deleteSetAudio.title} deleted`}
       />
       <Box>
-        <Grid columns={['medium', 'xsmall', 'xsmall', 'xsmall']} gap="small">
+        <Grid columns={['flex', '30px', '30px', '30px']}>
           {data.sets.map((item: any, i: number) => (
             <>
               <Box>
                 {item.title}{' '}
                 {item.audio && item.audio !== 'PROGRESS' && (
-                  <audio controls>
+                  <audio controls style={{ width: '100%' }}>
                     <source src={item.audio} type="audio/mpeg" />
                   </audio>
                 )}
