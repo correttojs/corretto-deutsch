@@ -88,7 +88,7 @@ const resolvers = {
       return {
         title: set.title,
         id,
-        audio: distPath.replace('./', '/'),
+        audio: 'PROGRESS',
       };
     },
   },
@@ -130,9 +130,14 @@ const server = new ApolloServer({ typeDefs, resolvers });
 const app = express();
 app.get('/audio/:path', (req, res) => {
   try {
-    getFile(req.params.path).pipe(res);
+    const readStream = getFile(req.params.path);
+    if (readStream) {
+      readStream.pipe(res);
+    } else {
+      res.status(404).json({ error: `${req.params.path} NOT FOUND` });
+    }
   } catch (e) {
-    res.json({ error: e });
+    res.status(404).json({ error: e });
   }
 });
 app.use(express.static('build'));

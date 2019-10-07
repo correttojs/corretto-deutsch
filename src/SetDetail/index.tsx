@@ -3,7 +3,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { Heading, Button, Table, TableHeader, TableRow, TableCell, TableBody, Box } from 'grommet';
-import { Previous, Download } from 'grommet-icons';
+import { Previous, Download, InProgress } from 'grommet-icons';
 import { Spinner } from '../Spinner';
 
 const QUERY = gql`
@@ -40,8 +40,15 @@ export const SetDetail = () => {
       </Box>
 
       <div>
-        {data.set.audio && <Button icon={<Download />} {...props} href={data.set.audio} />}
-
+        {data.set.audio && data.set.audio !== 'PROGRESS' && (
+          <Button icon={<Download />} {...props} href={data.set.audio} />
+        )}
+        {data.set.audio === 'PROGRESS' && <Button icon={<InProgress />} />}
+        {data.set.audio && data.set.audio !== 'PROGRESS' && (
+          <audio controls>
+            <source src={data.set.audio} type="audio/mpeg" />
+          </audio>
+        )}
         <Table>
           <TableHeader>
             <TableRow>

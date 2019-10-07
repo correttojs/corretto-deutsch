@@ -35,7 +35,7 @@ export const mergeAudio = (source: string[], target: string, twice: boolean) => 
       //   console.log('Stderr output: ' + stderrLine);
       // })
       .on('error', function(err) {
-        // console.log('An error occurred: ' + err.message);
+        console.log('An error occurred: ' + err.message);
         reject(err);
       })
       .on('end', function() {

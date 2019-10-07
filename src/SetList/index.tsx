@@ -2,7 +2,7 @@ import { useMutation, useLazyQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Download, Task, Trash, Music } from 'grommet-icons';
+import { Download, Task, Trash, Music, InProgress } from 'grommet-icons';
 import { Grid, Table, Button, TableHeader, TableRow, TableCell, TableBody, Box } from 'grommet';
 import { Spinner } from '../Spinner';
 import { Alert } from './Alert';
@@ -83,7 +83,7 @@ export const SetList = () => {
             <>
               <Box>
                 {item.title}{' '}
-                {item.audio && (
+                {item.audio && item.audio !== 'PROGRESS' && (
                   <audio controls>
                     <source src={item.audio} type="audio/mpeg" />
                   </audio>
@@ -120,7 +120,12 @@ export const SetList = () => {
                   />
                 )}
               </Box>
-              <Box>{item.audio && <Button icon={<Download />} {...props} href={item.audio} />}</Box>
+              <Box>
+                {item.audio && item.audio !== 'PROGRESS' && (
+                  <Button icon={<Download />} {...props} href={item.audio} />
+                )}
+                {item.audio === 'PROGRESS' && <Button icon={<InProgress />} />}
+              </Box>
               <Box>
                 <Button icon={<Task />} onClick={() => history.push(`/set/${item.id}`)} />
               </Box>
