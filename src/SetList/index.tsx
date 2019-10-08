@@ -1,9 +1,9 @@
-import { useMutation, useLazyQuery } from '@apollo/react-hooks';
+import { useMutation, useLazyQuery, useSubscription } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Download, Task, Trash, Music, InProgress } from 'grommet-icons';
-import { Grid, Table, Button, TableHeader, TableRow, TableCell, TableBody, Box } from 'grommet';
+import { Grid, Button, Box } from 'grommet';
 import { Spinner } from '../Spinner';
 import { Alert } from './Alert';
 import { SetFeedId } from './SetFeed';
@@ -39,9 +39,20 @@ const DOWNLOAD = gql`
   }
 `;
 
+const COMMENTS_SUBSCRIPTION = gql`
+  subscription {
+    setUpdated {
+      id
+      title
+      audio
+    }
+  }
+`;
+
 export const SetList = () => {
   const history = useHistory();
-
+  const { data: tt } = useSubscription(COMMENTS_SUBSCRIPTION);
+  console.log(tt);
   const [getSets, { data, loading, error, called }] = useLazyQuery(QUERY);
   const [download, { loading: downloadLoading }] = useMutation(DOWNLOAD);
   const [
@@ -79,7 +90,7 @@ export const SetList = () => {
       />
       <Box>
         <Grid columns={['flex', '30px', '30px', '30px']}>
-          {data.sets.map((item: any, i: number) => (
+          {data.sets.map((item: any) => (
             <>
               <Box>
                 {item.title}{' '}
@@ -105,7 +116,7 @@ export const SetList = () => {
                   <Button
                     icon={<Music />}
                     onClick={() => {
-                      download({ variables: { id: item.id } }).then(data => {
+                      download({ variables: { id: item.id } }).then(() => {
                         // setTimeout(() => {
                         // }, 1000)
                         // caches.open('audio').then(cache => {

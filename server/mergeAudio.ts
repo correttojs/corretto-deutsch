@@ -1,6 +1,7 @@
 import * as ffmpegPath from 'ffmpeg-static';
 import * as ffprobePath from 'ffprobe-static';
 import * as ffmpeg from 'fluent-ffmpeg';
+import { logger } from './logger';
 process.env.FFPROBE_PATH = ffprobePath.path;
 process.env.FFMPEG_PATH = ffmpegPath.path;
 const SILENCE = './audio/silence1.mp3';
@@ -35,7 +36,7 @@ export const mergeAudio = (source: string[], target: string, twice: boolean) => 
       //   console.log('Stderr output: ' + stderrLine);
       // })
       .on('error', function(err) {
-        console.log('An error occurred: ' + err.message);
+        logger.error('An error occurred: ' + err.message);
         reject(err);
       })
       .on('end', function() {

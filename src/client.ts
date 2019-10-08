@@ -4,6 +4,29 @@ import { createHttpLink } from 'apollo-link-http';
 
 import { persistCache } from 'apollo-cache-persist';
 
+import { WebSocketLink } from 'apollo-link-ws';
+import { split } from 'apollo-link';
+import { getMainDefinition } from 'apollo-utilities';
+
+const wsLink = new WebSocketLink({
+  uri: `ws://${window.location.host}/graphql`,
+  options: {
+    reconnect: true,
+  },
+});
+
+const httpLink = createHttpLink({ uri: '/graphql' });
+
+const link = split(
+  // split based on operation type
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+  },
+  wsLink,
+  httpLink,
+);
+
 export const client = async () => {
   const cache = new InMemoryCache();
   await persistCache({
@@ -11,7 +34,7 @@ export const client = async () => {
     storage: window.localStorage as any,
   });
   return new ApolloClient({
-    link: createHttpLink({ uri: '/graphql' }),
+    link,
     cache,
     defaultOptions: {
       query: {
