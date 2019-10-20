@@ -64,12 +64,13 @@ const resolvers = {
         throw new Error('Invalid set id');
       }
       const terms = (await getTerms(id)).map(mapTerms);
-      const dirPath = `./tmp/${set.title}`;
-      const distPath = `./audio/${set.title}.mp3`;
+      const fileTitle = set.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+      const dirPath = `./tmp/${fileTitle}`;
+      const distPath = `./audio/${fileTitle}.mp3`;
       const s3Path = await getS3PAth(distPath);
       if (s3Path) {
         return {
-          title: set.title,
+          title: fileTitle,
           id,
           audio: s3Path,
         };
@@ -86,7 +87,7 @@ const resolvers = {
       await fse.remove(dirPath);
       await uploadFile(distPath);
       return {
-        title: set.title,
+        title: fileTitle,
         id,
         audio: 'PROGRESS',
       };
