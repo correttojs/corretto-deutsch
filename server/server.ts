@@ -1,10 +1,13 @@
 import { ApolloServer, gql } from 'apollo-server-express';
+import * as util from 'util';
 import { getSets, getTerms, getAudio, getSet } from './quizlet';
 import { mergeAudio } from './mergeAudio';
 import * as fse from 'fs-extra';
 import { getDirFiles } from './toFile';
 import * as express from 'express';
 import { getS3PAth, uploadFile, deleteFile, getFile } from './fileUploader';
+import { textToMp3 } from './textToMp3';
+import * as fs from 'fs';
 
 const typeDefs = gql`
   type Term {
@@ -76,7 +79,9 @@ const resolvers = {
         };
       }
       await fse.ensureDir(dirPath);
-
+      const data = await textToMp3(set.title, 'de-DE');
+      const writeFile = util.promisify(fs.writeFile);
+      await writeFile(dirPath + '/0_title.mp3', data, 'binary');
       await Promise.all(
         terms.map(t => {
           return mergeAudio([t.wordAudio, t.translationAudio], `${dirPath}/${t.id}.mp3`, true);
