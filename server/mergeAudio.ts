@@ -5,7 +5,9 @@ process.env.FFPROBE_PATH = ffprobePath.path;
 process.env.FFMPEG_PATH = ffmpegPath.path;
 const SILENCE = './audio/silence1.mp3';
 const BUTTON = './audio/button.mp3';
+const nullAudio = 'https://quizlet.com/null';
 export const mergeAudio = (source: string[], target: string, twice: boolean) => {
+  source = source.map(i => (i === nullAudio ? SILENCE : i));
   return new Promise((resolve, reject) => {
     const f = ffmpeg();
     if (twice) {
