@@ -1,0 +1,23 @@
+query Sets($feedId: ID!) {
+  sets(feedId: $feedId) {
+    title
+    id
+    audio
+  }
+}
+
+mutation delete($id: ID!) {
+  deleteSetAudio(id: $id) {
+    audio
+    title
+    id
+  }
+}
+
+mutation download($id: ID!) {
+  mergeSetAudio(id: $id) {
+    audio
+    title
+    id
+  }
+}

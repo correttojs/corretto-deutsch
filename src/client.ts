@@ -6,10 +6,10 @@ import { persistCache } from 'apollo-cache-persist';
 
 export const client = async () => {
   const cache = new InMemoryCache();
-  await persistCache({
-    cache,
-    storage: window.localStorage as any,
-  });
+  // await persistCache({
+  //   cache,
+  //   storage: window.localStorage as any,
+  // });
   return new ApolloClient({
     link: createHttpLink({ uri: '/graphql' }),
     cache,

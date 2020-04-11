@@ -1,33 +1,21 @@
 import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import { Heading, Button, Table, TableHeader, TableRow, TableCell, TableBody, Box } from 'grommet';
 import { Previous, Download, InProgress } from 'grommet-icons';
 import { Spinner } from '../Spinner';
-
-const QUERY = gql`
-  query Set($id: ID!) {
-    set(id: $id) {
-      title
-      id
-      audio
-      terms {
-        word
-        translation
-      }
-    }
-  }
-`;
+import { useSetQuery } from '../generated/graphql';
 
 export const SetDetail = () => {
   const history = useHistory();
   const { id } = useParams();
-  const { data, loading, error } = useQuery(QUERY, { variables: { id } });
+  const { data, loading, error } = useSetQuery({ variables: { id: id ?? '' } });
   if (loading) {
     return <Spinner />;
   }
   if (error) {
+    return null;
+  }
+  if (!data) {
     return null;
   }
   const props = { download: true };
@@ -57,7 +45,7 @@ export const SetDetail = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.set.terms.map((t: any, key: number) => (
+            {data.set?.terms?.map((t: any, key: number) => (
               <TableRow key={key}>
                 <TableCell scope="row">{t.word}</TableCell>
                 <TableCell>{t.translation}</TableCell>

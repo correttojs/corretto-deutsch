@@ -1,0 +1,11 @@
+query Set($id: ID!) {
+  set(id: $id) {
+    title
+    id
+    audio
+    terms {
+      word
+      translation
+    }
+  }
+}

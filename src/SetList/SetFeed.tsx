@@ -1,13 +1,14 @@
 import React, { useRef } from 'react';
 import { Button, TextInput, Box } from 'grommet';
 import { List } from 'grommet-icons';
-import { QueryLazyOptions } from '@apollo/react-hooks';
+import { useSetsLazyQuery } from '../generated/graphql';
 
 export const SetFeedId: React.FC<{
   feedId: string | null;
-  getSets: (options?: QueryLazyOptions<Record<string, any>> | undefined) => void;
-}> = ({ feedId, getSets }) => {
+}> = ({ feedId }) => {
   const inputRef = useRef<any>(null);
+
+  const [getSets, { data, loading, error, called }] = useSetsLazyQuery();
   return (
     <Box direction="row-responsive" alignContent="center">
       <Box width="small" alignContent="center">
