@@ -11,7 +11,7 @@ export const client = async () => {
   //   storage: window.localStorage as any,
   // });
   return new ApolloClient({
-    link: createHttpLink({ uri: '/graphql' }),
+    link: createHttpLink({ uri: '/api' }),
     cache,
     defaultOptions: {
       query: {
