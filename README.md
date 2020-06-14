@@ -1,3 +1,7 @@
+# Corretto Deutsch
+
+A text to speech tool for learning German
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
