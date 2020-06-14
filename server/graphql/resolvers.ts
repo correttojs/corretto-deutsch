@@ -8,6 +8,7 @@ import { getAudio, getSet, getSets, getTerms } from '../quizlet';
 import { textToMp3 } from '../textToMp3';
 import { getDirFiles } from '../toFile';
 import { mergeAudio } from '../mergeAudio';
+import { translateText } from '../translateText';
 
 const mapTerms = (t: any) => {
   return {
@@ -58,7 +59,12 @@ export const resolvers = {
       await writeFile(dirPath + '/0_title.mp3', data, 'binary');
       await Promise.all(
         terms.map((t) => {
-          return mergeAudio([t.wordAudio, t.translationAudio], `${dirPath}/${t.id}.mp3`, true);
+          return mergeAudio(
+            [t.wordAudio, t.translationAudio],
+            `${dirPath}/${t.id}.mp3`,
+            true,
+            t.word,
+          );
         }),
       );
       const files = await getDirFiles(dirPath);

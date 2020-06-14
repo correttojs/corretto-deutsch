@@ -13,7 +13,7 @@ console.log('FFMPEG_PATH', process.env.FFMPEG_PATH);
 ffmpeg(BUTTON).ffprobe(function (err, data) {
   console.log('file2 metadata:' + data?.format?.filename);
 });
-export const mergeAudio = (source: string[], target: string, twice: boolean) => {
+export const mergeAudio = (source: string[], target: string, twice: boolean, message?: string) => {
   console.log('merging');
   source = source.map((i) => (i === nullAudio ? SILENCE : i));
   return new Promise((resolve, reject) => {
@@ -43,7 +43,7 @@ export const mergeAudio = (source: string[], target: string, twice: boolean) => 
       //   console.log('Stderr output: ' + stderrLine);
       // })
       .on('error', function (err) {
-        console.log('An error occurred: ' + err.message + JSON.stringify(source));
+        console.log('An error occurred: ' + message + err.message + JSON.stringify(source));
         reject(err);
       })
       .on('end', function (data) {
